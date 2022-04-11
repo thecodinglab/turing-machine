@@ -2,7 +2,13 @@ CACHE_DIR := .cache
 OUT_DIR := bin
 
 TARGET := $(OUT_DIR)/turing-machine
-SOURCES := src/main.c src/buffer.c src/parse.c src/tape.c src/turing_machine.c
+SOURCES := src/main.c \
+					 src/parse/buffer.c \
+					 src/parse/parse.c \
+					 src/parse/reader.c \
+					 src/turing-machine/format.c \
+					 src/turing-machine/machine.c \
+					 src/turing-machine/tape.c
 OBJECTS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.o)
 DEPS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.d)
 

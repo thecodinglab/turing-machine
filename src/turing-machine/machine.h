@@ -25,7 +25,10 @@ typedef struct {
 } transition_t;
 
 typedef struct {
-  tape_t *head;
+  tape_t positive;
+  tape_t negative;
+  int32_t head;
+
   state_t state;
 
   transition_t transitions[MAX_TRANSITION_COUNT];

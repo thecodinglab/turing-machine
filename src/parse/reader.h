@@ -1,8 +1,8 @@
 #pragma once
 
 #include "buffer.h"
-#include "turing_machine.h"
 
+#include <stddef.h>
 #include <stdio.h>
 
 typedef struct reader reader_t;
@@ -17,4 +17,7 @@ struct reader {
 reader_t reader_open_static(void *src, size_t size);
 reader_t reader_open_file(FILE *file);
 
-turing_machine_t reader_parse_turing_machine(reader_t *reader);
+char reader_current(reader_t *reader);
+void reader_next(reader_t *reader);
+
+uint32_t reader_count_symbols(reader_t *reader, char symbol);
