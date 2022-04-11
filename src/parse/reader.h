@@ -3,6 +3,7 @@
 #include "buffer.h"
 
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 
 typedef struct reader reader_t;

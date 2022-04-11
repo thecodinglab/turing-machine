@@ -1,5 +1,4 @@
 #include "reader.h"
-#include "debug.h"
 
 #include <assert.h>
 #include <memory.h>
@@ -7,7 +6,7 @@
 size_t static_read(void *dest, size_t size, void *handle) { return EOF; }
 
 size_t file_read(void *dest, size_t size, void *handle) {
-  return fread(dest, size, 1, (FILE *)handle);
+  return fread(dest, 1, size, (FILE *)handle);
 }
 
 reader_t reader_open_static(void *src, size_t size) {
@@ -30,7 +29,12 @@ reader_t reader_open_file(FILE *file) {
   };
 }
 
-char reader_current(reader_t *reader) { return buffer_current(&reader->buf); }
+char reader_current(reader_t *reader) {
+  if (buffer_is_empty(&reader->buf))
+    reader_next(reader);
+
+  return buffer_current(&reader->buf);
+}
 
 void reader_next(reader_t *reader) {
   if (!buffer_has_next(&reader->buf)) {

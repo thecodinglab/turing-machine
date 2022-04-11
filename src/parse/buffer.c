@@ -17,6 +17,8 @@ void buffer_free(buffer_t *buffer) {
     free(buffer->ptr);
 }
 
+int buffer_is_empty(buffer_t *buffer) { return buffer->pos >= buffer->lim; }
+
 char buffer_current(buffer_t *buffer) {
   if (buffer->pos >= buffer->lim)
     return EOF;
