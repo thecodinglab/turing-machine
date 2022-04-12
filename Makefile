@@ -27,6 +27,11 @@ ifeq ($(DEBUG), 1)
 	CFLAGS += -DDEBUG -ggdb
 endif
 
+# enable overflow checks
+ifeq ($(DEBUG), 1)
+	CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+endif
+
 all: $(TARGET)
 
 clean:
