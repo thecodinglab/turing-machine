@@ -37,6 +37,9 @@ typedef struct {
 
 void turing_machine_destroy(turing_machine_t *turing_machine);
 
+symbol_t turing_machine_read(turing_machine_t *turing_machine);
+void turing_machine_write(turing_machine_t *turing_machine, symbol_t symbol);
+
 int turing_machine_is_accepting(turing_machine_t *turing_machine);
 
 int turing_machine_next(turing_machine_t *turing_machine);

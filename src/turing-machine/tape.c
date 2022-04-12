@@ -38,6 +38,5 @@ symbol_t tape_read_at(tape_t *tape, size_t pos) {
   if (pos >= tape->lim)
     return SYMBOL_EMPTY;
 
-  tape->lim = MAX(pos + 1, tape->lim);
   return tape->ptr[pos];
 }

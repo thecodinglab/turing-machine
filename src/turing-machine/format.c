@@ -212,52 +212,75 @@ int format_head_end(char *buf, size_t size, format_options_t opts) {
     return 0;
 }
 
-int format_symbol_and_head(char *buf, size_t size, format_options_t opts,
-                           symbol_t symbol, int is_head) {
+int format_tape_range(char *buf, size_t size, format_options_t opts,
+                      tape_t *tape, size_t offset, int32_t head, int invert) {
   int w = 0;
 
-  if (is_head) {
-    w += format_head_start(buf + w, size - w, opts);
+  size_t count = tape->lim + offset;
+  for (size_t i = 0; i < count; i++) {
+    size_t idx = i;
+    if (invert)
+      idx = count - i - 1;
+
+    symbol_t symbol = tape_read_at(tape, idx);
+    int is_head = i == head; // TODO
+
+    if (is_head) {
+      w += format_head_start(buf + w, size - w, opts);
+      if (w >= size)
+        return size;
+    }
+
+    w += format_symbol(buf + w, size - w, opts, symbol);
     if (w >= size)
       return size;
-  }
 
-  w += format_symbol(buf + w, size - w, opts, symbol);
-  if (w >= size)
-    return size;
-
-  if (is_head) {
-    w += format_head_end(buf + w, size - w, opts);
-    if (w >= size)
-      return size;
+    if (is_head) {
+      w += format_head_end(buf + w, size - w, opts);
+      if (w >= size)
+        return size;
+    }
   }
 
   return w;
 }
 
 int format_tape(char *buf, size_t size, format_options_t opts,
-                turing_machine_t *turing_machine) {
+                turing_machine_t *turing_machine, size_t offset) {
   int w = 0;
 
-  for (size_t i = 0; i < turing_machine->negative.lim; i++) {
-    symbol_t symbol = tape_read_at(&turing_machine->negative,
-                                   turing_machine->negative.cap - i - 1);
-
-    w += format_symbol_and_head(buf + w, size - w, opts, symbol,
-                                turing_machine->head == (-i - 1));
-
-    if (w >= size)
-      return size;
+  if (offset > 0) {
+    if (opts.allow_unicode_characters) {
+      w += snprintf(buf + w, size - w, "\xe2\x80\xa6");
+      if (w >= size)
+        return size;
+    } else {
+      w += snprintf(buf + w, size - w, "...");
+      if (w >= size)
+        return size;
+    }
   }
 
-  for (size_t i = 0; i < turing_machine->positive.lim; i++) {
-    symbol_t symbol = tape_read_at(&turing_machine->positive, i);
+  w += format_tape_range(buf + w, size - w, opts, &turing_machine->negative,
+                         offset, -turing_machine->head - 1, 1);
+  if (w >= size)
+    return size;
 
-    w += format_symbol_and_head(buf + w, size - w, opts, symbol,
-                                turing_machine->head == i);
+  w += format_tape_range(buf + w, size - w, opts, &turing_machine->positive,
+                         offset, turing_machine->head, 0);
+  if (w >= size)
+    return size;
 
-    if (w >= size)
-      return size;
+  if (offset > 0) {
+    if (opts.allow_unicode_characters) {
+      w += snprintf(buf + w, size - w, "\xe2\x80\xa6");
+      if (w >= size)
+        return size;
+    } else {
+      w += snprintf(buf + w, size - w, "...");
+      if (w >= size)
+        return size;
+    }
   }
 
   return w;
