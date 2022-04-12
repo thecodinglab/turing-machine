@@ -1,4 +1,5 @@
 #include "tape.h"
+#include "debug.h"
 
 #include <stdlib.h>
 
@@ -17,7 +18,9 @@ size_t tape_determine_size(size_t required, size_t block_size) {
 }
 
 void tape_resize(tape_t *tape, size_t cap) {
-  tape->ptr = realloc(tape->ptr, cap);
+  LOG("resize tape from %lu to %lu\n", tape->cap, cap);
+
+  tape->ptr = realloc(tape->ptr, cap * sizeof(symbol_t));
   tape->cap = cap;
 }
 
@@ -32,10 +35,9 @@ void tape_write_at(tape_t *tape, size_t pos, symbol_t symbol) {
 }
 
 symbol_t tape_read_at(tape_t *tape, size_t pos) {
-  tape->lim = MAX(pos + 1, tape->lim);
-
-  if (pos >= tape->cap)
+  if (pos >= tape->lim)
     return SYMBOL_EMPTY;
 
+  tape->lim = MAX(pos + 1, tape->lim);
   return tape->ptr[pos];
 }
