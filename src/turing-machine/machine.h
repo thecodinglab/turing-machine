@@ -35,6 +35,8 @@ typedef struct {
   size_t transition_count;
 } turing_machine_t;
 
+void turing_machine_destroy(turing_machine_t *turing_machine);
+
 int turing_machine_is_accepting(turing_machine_t *turing_machine);
 
 int turing_machine_next(turing_machine_t *turing_machine);

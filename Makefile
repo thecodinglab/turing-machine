@@ -19,6 +19,10 @@ ifeq ($(UNICODE), 1)
 	CFLAGS += -DUNICODE
 endif
 
+ifeq ($(ANSI), 1)
+	CFLAGS += -DANSI
+endif
+
 ifeq ($(DEBUG), 1)
 	CFLAGS += -DDEBUG -ggdb
 endif

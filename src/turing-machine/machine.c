@@ -8,6 +8,11 @@
 #define FMT_BUFFER_SIZE 2048
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
+void turing_machine_destroy(turing_machine_t *turing_machine) {
+  tape_destroy(&turing_machine->positive);
+  tape_destroy(&turing_machine->negative);
+}
+
 tape_t *turing_machine_get_tape(turing_machine_t *turing_machine) {
   if (turing_machine->head < 0)
     return &turing_machine->negative;
@@ -19,8 +24,11 @@ void turing_machine_process(turing_machine_t *turing_machine,
                             transition_t transition) {
   static char buffer[FMT_BUFFER_SIZE];
 
-  format_transition(buffer, FMT_BUFFER_SIZE, transition);
-  LOG("transitioning: %s\n", buffer);
+  format_tape(buffer, FMT_BUFFER_SIZE, format_debug, turing_machine);
+  LOG("transitioning: %s", buffer);
+
+  format_transition(buffer, FMT_BUFFER_SIZE, format_debug, transition);
+  LOG(" -> %s\n", buffer);
 
   turing_machine->state = transition.next;
 
@@ -36,9 +44,6 @@ void turing_machine_process(turing_machine_t *turing_machine,
     turing_machine->head--;
     break;
   }
-
-  format_tape(buffer, FMT_BUFFER_SIZE, turing_machine);
-  LOG("tape: %s\n", buffer);
 }
 
 int turing_machine_is_accepting(turing_machine_t *turing_machine) {
