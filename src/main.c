@@ -11,6 +11,7 @@ int main() {
 
   reader_t reader = reader_open_file(stdin);
   turing_machine_t turing_machine = parse_turing_machine(&reader);
+  reader_destroy(&reader);
 
   printf("interpreted transitions: \n");
   for (size_t i = 0; i < turing_machine.transition_count; i++) {

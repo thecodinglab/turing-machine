@@ -29,24 +29,31 @@ reader_t reader_open_file(FILE *file) {
   };
 }
 
+void reader_destroy(reader_t *reader) { buffer_free(&reader->buf); }
+
+void reader_more(reader_t *reader) {
+  size_t count = reader->read(reader->buf.ptr, reader->buf.cap, reader->handle);
+
+  if (count == EOF)
+    return;
+
+  reader->buf.pos = 0;
+  reader->buf.lim = count;
+}
+
 char reader_current(reader_t *reader) {
   if (buffer_is_empty(&reader->buf))
-    reader_next(reader);
+    reader_more(reader);
+
+  if (buffer_is_empty(&reader->buf))
+    return EOF;
 
   return buffer_current(&reader->buf);
 }
 
 void reader_next(reader_t *reader) {
-  if (!buffer_has_next(&reader->buf)) {
-    size_t count =
-        reader->read(reader->buf.ptr, reader->buf.cap, reader->handle);
-
-    if (count == EOF)
-      return;
-
-    reader->buf.pos = 0;
-    reader->buf.lim = count;
-  }
+  if (!buffer_has_next(&reader->buf))
+    reader_more(reader);
 
   if (!buffer_has_next(&reader->buf))
     return;
