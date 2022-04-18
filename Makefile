@@ -8,7 +8,8 @@ SOURCES := src/main.c \
 					 src/parse/reader.c \
 					 src/turing-machine/format.c \
 					 src/turing-machine/machine.c \
-					 src/turing-machine/tape.c
+					 src/turing-machine/tape.c \
+					 src/util/list.c
 OBJECTS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.o)
 DEPS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.d)
 

@@ -54,15 +54,15 @@ int main(int argc, char **argv) {
   else
     printf(ANSI_FG_RED "REJECTING" ANSI_RESET "\n");
 
-  format_tape(buffer, FMT_BUFFER_SIZE, format_default, &turing_machine, 0);
+  format_tape(buffer, FMT_BUFFER_SIZE, format_default, &turing_machine.tape, 0);
   printf("content: %s\n", buffer);
 
-  format_tape(buffer, FMT_BUFFER_SIZE, format_default, &turing_machine, 5);
+  format_tape(buffer, FMT_BUFFER_SIZE, format_default, &turing_machine.tape, 5);
   printf("\nturing_machine = {tape=%s, ", buffer);
   format_state(buffer, FMT_BUFFER_SIZE, format_default, turing_machine.state);
   printf("state=%s, ", buffer);
 
-  printf("head=%d, ", turing_machine.head);
+  printf("head=%d, ", turing_machine.tape.head);
   printf("steps=%lu}\n", steps);
 
   turing_machine_destroy(&turing_machine);

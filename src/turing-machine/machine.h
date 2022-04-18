@@ -11,11 +11,6 @@
 
 typedef uint32_t state_t;
 
-typedef enum {
-  DIRECTION_LEFT,
-  DIRECTION_RIGHT,
-} direction_t;
-
 typedef struct {
   state_t state;
   symbol_t in;
@@ -25,9 +20,7 @@ typedef struct {
 } transition_t;
 
 typedef struct {
-  tape_t positive;
-  tape_t negative;
-  int32_t head;
+  tape_t tape;
 
   state_t state;
 
@@ -35,10 +28,8 @@ typedef struct {
   size_t transition_count;
 } turing_machine_t;
 
+turing_machine_t turing_machine_create(tape_t tape);
 void turing_machine_destroy(turing_machine_t *turing_machine);
-
-symbol_t turing_machine_read(turing_machine_t *turing_machine);
-void turing_machine_write(turing_machine_t *turing_machine, symbol_t symbol);
 
 int turing_machine_is_accepting(turing_machine_t *turing_machine);
 

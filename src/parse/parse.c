@@ -58,7 +58,7 @@ transition_t parse_transition(reader_t *reader) {
 }
 
 tape_t parse_tape(reader_t *reader) {
-  tape_t tape = {};
+  tape_t tape = tape_create();
 
   size_t pos = 0;
   while (reader_current(reader) != TOKEN_SEPARATOR) {
@@ -71,14 +71,7 @@ tape_t parse_tape(reader_t *reader) {
 
 turing_machine_t parse_turing_machine(reader_t *reader) {
   tape_t tape = parse_tape(reader);
-
-  turing_machine_t turing_machine = {
-      .positive = tape,
-      .negative = {},
-      .head = 0,
-
-      .state = STARTING_STATE,
-  };
+  turing_machine_t turing_machine = turing_machine_create(tape);
 
   size_t i = 0;
   while (has_transition(reader)) {

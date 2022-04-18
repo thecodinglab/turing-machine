@@ -1,42 +1,62 @@
 #include "tape.h"
-#include "debug.h"
 
-#include <stdlib.h>
-
-#define BLOCK_SIZE 1024
-
-#define MAX(x, y) ((x) > (y) ? (x) : (y))
-
-void tape_destroy(tape_t *tape) { free(tape->ptr); }
-
-size_t tape_determine_size(size_t required, size_t block_size) {
-  size_t remainder = required % block_size;
-  if (remainder == 0)
-    return required;
-
-  return required - remainder + block_size;
+tape_t tape_create() {
+  return (tape_t){
+      .positive = list_create(1024, sizeof(symbol_t)),
+      .negative = list_create(1024, sizeof(symbol_t)),
+      .head = 0,
+  };
 }
 
-void tape_resize(tape_t *tape, size_t cap) {
-  LOG("resize tape from %lu to %lu\n", tape->cap, cap);
-
-  tape->ptr = realloc(tape->ptr, cap * sizeof(symbol_t));
-  tape->cap = cap;
+void tape_destroy(tape_t *tape) {
+  list_destroy(&tape->positive);
+  list_destroy(&tape->negative);
 }
 
-void tape_write_at(tape_t *tape, size_t pos, symbol_t symbol) {
-  if (pos >= tape->cap) {
-    size_t size = tape_determine_size(pos + 1, BLOCK_SIZE);
-    tape_resize(tape, size);
-  }
-
-  tape->lim = MAX(pos + 1, tape->lim);
-  tape->ptr[pos] = symbol;
+static list_t *tape_get_list(tape_t *tape, tape_head_t pos) {
+  if (pos < 0)
+    return &tape->negative;
+  else
+    return &tape->positive;
 }
 
-symbol_t tape_read_at(tape_t *tape, size_t pos) {
-  if (pos >= tape->lim)
+static size_t tape_get_index(tape_head_t pos) {
+  if (pos < 0)
+    return -(pos + 1);
+  else
+    return pos;
+}
+
+symbol_t tape_read_at(tape_t *tape, tape_head_t pos) {
+  size_t idx = tape_get_index(pos);
+  list_t *list = tape_get_list(tape, pos);
+
+  if (idx >= list->count)
     return SYMBOL_EMPTY;
 
-  return tape->ptr[pos];
+  return *((symbol_t *)list_get(list, idx));
+}
+
+void tape_write_at(tape_t *tape, tape_head_t pos, symbol_t symbol) {
+  size_t idx = tape_get_index(pos);
+  list_t *list = tape_get_list(tape, pos);
+  list_add(list, idx, &symbol);
+}
+
+symbol_t tape_read(tape_t *tape) { return tape_read_at(tape, tape->head); }
+
+void tape_write(tape_t *tape, symbol_t symbol) {
+  tape_write_at(tape, tape->head, symbol);
+}
+
+void tape_move(tape_t *tape, direction_t direction) {
+  switch (direction) {
+  case DIRECTION_RIGHT:
+    tape->head++;
+    break;
+
+  case DIRECTION_LEFT:
+    tape->head--;
+    break;
+  }
 }
