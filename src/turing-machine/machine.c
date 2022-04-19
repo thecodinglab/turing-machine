@@ -34,6 +34,7 @@ turing_machine_t turing_machine_create() {
 
 void turing_machine_destroy(turing_machine_t *turing_machine) {
   tape_destroy(&turing_machine->tape);
+  map_destroy(&turing_machine->transitions);
 }
 
 void turing_machine_process(turing_machine_t *turing_machine,
