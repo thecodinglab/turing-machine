@@ -42,7 +42,7 @@ void list_resize(list_t *list, size_t capacity) {
     list->count = list->capacity;
 }
 
-void *list_ptr(list_t *list, size_t idx) {
+static inline void *list_ptr(list_t *list, size_t idx) {
   assert(idx < list->capacity);
   return list->ptr + (idx * list->size);
 }

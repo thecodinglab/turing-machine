@@ -19,11 +19,11 @@ void map_destroy(map_t *map) {
   list_destroy(&map->items);
 }
 
-map_key_t map_get_key_ptr(map_t *map, size_t idx) {
+static inline map_key_t map_get_key_ptr(map_t *map, size_t idx) {
   return list_get(&map->items, idx) + 0;
 }
 
-map_value_t map_get_value_ptr(map_t *map, size_t idx) {
+static inline map_value_t map_get_value_ptr(map_t *map, size_t idx) {
   return list_get(&map->items, idx) + map->key_size;
 }
 
