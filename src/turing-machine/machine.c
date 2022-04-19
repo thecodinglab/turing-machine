@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define FMT_BUFFER_SIZE 2048
+#define FMT_BUFFER_SIZE 1024 * 1024
 
 typedef struct {
   state_t state;
@@ -39,16 +39,19 @@ void turing_machine_destroy(turing_machine_t *turing_machine) {
 
 void turing_machine_process(turing_machine_t *turing_machine,
                             transition_t transition) {
+#ifdef DEBUG
   static char buffer[FMT_BUFFER_SIZE];
 
   // place tape before transition into buffer.
   format_tape(buffer, FMT_BUFFER_SIZE, format_debug, &turing_machine->tape, 0);
+#endif // DEBUG
 
   // transition to the next state and update the tape.
   turing_machine->state = transition.next;
   tape_write(&turing_machine->tape, transition.out);
   tape_move(&turing_machine->tape, transition.dir);
 
+#ifdef DEBUG
   // log transition debug messges.
   LOG("transitioning: %s", buffer);
 
@@ -57,6 +60,7 @@ void turing_machine_process(turing_machine_t *turing_machine,
 
   format_tape(buffer, FMT_BUFFER_SIZE, format_debug, &turing_machine->tape, 0);
   LOG("%s\n", buffer);
+#endif // DEBUG
 }
 
 void turing_machine_add_transition(turing_machine_t *turing_machine,

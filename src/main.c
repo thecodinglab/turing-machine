@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define FMT_BUFFER_SIZE 2048
+#define FMT_BUFFER_SIZE 1024 * 1024
 
 #ifdef ANSI
 #define ANSI_FG_RED "\033[31m"
