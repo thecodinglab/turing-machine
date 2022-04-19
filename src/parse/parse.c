@@ -85,14 +85,12 @@ turing_machine_t parse_turing_machine(reader_t *reader) {
 
   turing_machine.tape = parse_tape(reader);
 
-  size_t i = 0;
   while (has_transition(reader)) {
     reader_next(reader);
 
     transition_t transition = parse_transition(reader);
-    turing_machine.transitions[i++] = transition;
+    turing_machine_add_transition(&turing_machine, transition);
   }
-  turing_machine.transition_count = i;
 
   return turing_machine;
 }

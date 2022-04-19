@@ -73,3 +73,19 @@ void list_set(list_t *list, size_t idx, const void *data);
 /// @param idx the index at which to add the value.
 /// @param data the data which should be added.
 void list_add(list_t *list, size_t idx, const void *data);
+
+/// Adds the value of the provided data pointer to the list at the given index.
+///
+/// If an element is already present at the given location, the data will be
+/// moved to make space for the given data.
+///
+/// If the index is not within the element count of the list, this function will
+/// extend the list and set the value. Any memory between the last element count
+/// and the new one will be set to zero.
+///
+/// The given data pointer must be list_t::size bytes long.
+///
+/// @param list the list where to add the value.
+/// @param idx the index at which to add the value.
+/// @param data the data which should be added.
+void list_append(list_t *list, size_t idx, const void *data);

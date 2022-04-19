@@ -57,23 +57,51 @@ void list_set(list_t *list, size_t idx, const void *data) {
   memmove(list_ptr(list, idx), data, list->size);
 }
 
-void list_add(list_t *list, size_t idx, const void *data) {
-  if (idx >= list->capacity) {
+/// Ensures that the list has has enough space for the given amount of elements.
+///
+/// If the requirement is not fulfilled, the list will be resized.
+///
+/// @param list the list to ensure the capacity.
+/// @param req the required minimum capacity.
+void list_ensure(list_t *list, size_t req) {
+  if (req >= list->capacity) {
     // item is out of capacity: resize list.
-    list_resize(list, idx + 1); // TODO min block size
+    list_resize(list, req);
   }
 
-  if (idx >= list->count) {
+  if (req >= list->count) {
     // item is out of bounds: clear memory inbetween and increase bounds.
 
     // clear memory between bounds.
-    size_t added = (idx + 1) - list->count;
+    size_t added = req - list->count;
     memset(list_ptr(list, list->count), 0, added * list->size);
 
     // increase list bounds.
-    list->count = idx + 1;
+    list->count = req;
   }
+}
 
-  // item is within bounds: set item to given value.
+void list_add(list_t *list, size_t idx, const void *data) {
+  list_ensure(list, idx + 1);
+  list_set(list, idx, data);
+}
+
+/// Shifts all elements starting from the given offset to the right.
+void list_shift(list_t *list, size_t offset) {
+  assert(offset < list->count);
+
+  for (size_t i = list->count - 1; i > offset; i--) {
+    list_set(list, i, list_get(list, i - 1));
+  }
+}
+
+void list_append(list_t *list, size_t idx, const void *data) {
+  size_t req = idx + 1;
+  if (req < list->count + 1)
+    req = list->count + 1;
+
+  list_ensure(list, req);
+
+  list_shift(list, idx);
   list_set(list, idx, data);
 }

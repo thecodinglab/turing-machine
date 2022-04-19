@@ -7,10 +7,28 @@
 
 #define FMT_BUFFER_SIZE 2048
 
+typedef struct {
+  state_t state;
+  symbol_t symbol;
+} transition_key_t;
+
+static int transition_key_cmp(map_key_t a_ptr, map_key_t b_ptr) {
+  transition_key_t *a = (transition_key_t *)a_ptr;
+  transition_key_t *b = (transition_key_t *)b_ptr;
+
+  int cmp = b->state - a->state;
+  if (cmp == 0)
+    cmp = b->symbol - a->symbol;
+
+  return cmp;
+}
+
 turing_machine_t turing_machine_create() {
   return (turing_machine_t){
       .tape = tape_create(),
       .state = STARTING_STATE,
+      .transitions = map_create(sizeof(transition_key_t), sizeof(transition_t),
+                                transition_key_cmp),
   };
 }
 
@@ -40,6 +58,16 @@ void turing_machine_process(turing_machine_t *turing_machine,
   LOG("%s\n", buffer);
 }
 
+void turing_machine_add_transition(turing_machine_t *turing_machine,
+                                   transition_t transition) {
+  transition_key_t key = {
+      .state = transition.state,
+      .symbol = transition.in,
+  };
+
+  map_insert(&turing_machine->transitions, &key, &transition);
+}
+
 int turing_machine_is_accepting(turing_machine_t *turing_machine) {
   return turing_machine->state == ACCEPTING_STATE;
 }
@@ -47,13 +75,15 @@ int turing_machine_is_accepting(turing_machine_t *turing_machine) {
 int turing_machine_next(turing_machine_t *turing_machine) {
   symbol_t symbol = tape_read(&turing_machine->tape);
 
-  for (size_t i = 0; i < turing_machine->transition_count; i++) {
-    transition_t transition = turing_machine->transitions[i];
-    if (transition.state == turing_machine->state && transition.in == symbol) {
-      turing_machine_process(turing_machine, transition);
-      return 1;
-    }
-  }
+  transition_key_t key = {
+      .state = turing_machine->state,
+      .symbol = symbol,
+  };
 
-  return 0;
+  transition_t *transition = map_find(&turing_machine->transitions, &key);
+  if (transition == NULL)
+    return 0;
+
+  turing_machine_process(turing_machine, *transition);
+  return 1;
 }

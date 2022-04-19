@@ -2,6 +2,8 @@
 #include "turing-machine/format.h"
 #include "turing-machine/machine.h"
 
+#include "util/map.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -19,6 +21,10 @@
 
 #include <signal.h>
 
+int cmp(map_key_t a, map_key_t b) {
+  return strcmp((const char *)a, (const char *)b);
+}
+
 int main(int argc, char **argv) {
   static char buffer[FMT_BUFFER_SIZE];
 
@@ -32,10 +38,11 @@ int main(int argc, char **argv) {
   reader_destroy(&reader);
 
   printf("interpreted transitions: \n");
-  for (size_t i = 0; i < turing_machine.transition_count; i++) {
-    transition_t transition = turing_machine.transitions[i];
+  for (size_t i = 0; i < turing_machine.transitions.items.count; i++) {
+    transition_t *transition = list_get(&turing_machine.transitions.items, i) +
+                               turing_machine.transitions.key_size;
 
-    format_transition(buffer, FMT_BUFFER_SIZE, format_default, transition);
+    format_transition(buffer, FMT_BUFFER_SIZE, format_default, *transition);
     printf("  %s\n", buffer);
   }
 

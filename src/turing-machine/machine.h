@@ -13,6 +13,7 @@
 #include <stdint.h>
 
 #include "tape.h"
+#include "util/map.h"
 
 /// The accepting state of every turing machine.
 #define ACCEPTING_STATE 0
@@ -59,9 +60,7 @@ typedef struct {
   /// The current state.
   state_t state;
   /// The transitions of the turing machine.
-  transition_t transitions[MAX_TRANSITION_COUNT];
-  /// The number of transitions.
-  size_t transition_count;
+  map_t transitions;
 } turing_machine_t;
 
 /// Constructs a new empty turing machine.
@@ -73,6 +72,13 @@ turing_machine_t turing_machine_create();
 ///
 /// @param turing_machine the turing machine to destroy.
 void turing_machine_destroy(turing_machine_t *turing_machine);
+
+/// Adds the given transition to the turing machine.
+///
+/// @param turing_machine the turing machine to attach the transition to.
+/// @param transition the transition to attach.
+void turing_machine_add_transition(turing_machine_t *turing_machine,
+                                   transition_t transition);
 
 /// Checks wheather the turing machine is in an accepting state.
 ///
