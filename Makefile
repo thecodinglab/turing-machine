@@ -35,6 +35,7 @@ endif
 
 all: $(TARGET)
 
+.PHONY: clean
 clean:
 	rm -rf $(CACHE_DIR) $(OUT_DIR)
 
@@ -53,6 +54,12 @@ $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
 
 -include $(DEPS)
+
+# Documentation
+
+.PHONY: docs
+docs:
+	doxygen
 
 # Test
 

@@ -9,18 +9,29 @@
 #define TOKEN_RIGHT 'R'
 #define TOKEN_LEFT 'L'
 
+uint32_t parse_symbol_count(reader_t *reader, char symbol) {
+  uint32_t count = 0;
+
+  while (reader_current(reader) == symbol) {
+    count++;
+    reader_next(reader);
+  }
+
+  return count;
+}
+
 state_t parse_state(reader_t *reader) {
   assert(reader_current(reader) == TOKEN_PREFIX);
   reader_next(reader);
 
-  return (state_t)reader_count_symbols(reader, TOKEN_STATE);
+  return (state_t)parse_symbol_count(reader, TOKEN_STATE);
 }
 
 symbol_t parse_symbol(reader_t *reader) {
   assert(reader_current(reader) == TOKEN_PREFIX);
   reader_next(reader);
 
-  return (symbol_t)reader_count_symbols(reader, TOKEN_SYMBOL);
+  return (symbol_t)parse_symbol_count(reader, TOKEN_SYMBOL);
 }
 
 direction_t parse_direction(reader_t *reader) {
@@ -70,8 +81,9 @@ tape_t parse_tape(reader_t *reader) {
 }
 
 turing_machine_t parse_turing_machine(reader_t *reader) {
-  tape_t tape = parse_tape(reader);
-  turing_machine_t turing_machine = turing_machine_create(tape);
+  turing_machine_t turing_machine = turing_machine_create();
+
+  turing_machine.tape = parse_tape(reader);
 
   size_t i = 0;
   while (has_transition(reader)) {

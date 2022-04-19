@@ -31,14 +31,15 @@ reader_t reader_open_file(FILE *file) {
 
 void reader_destroy(reader_t *reader) { buffer_free(&reader->buf); }
 
-void reader_more(reader_t *reader) {
+size_t reader_more(reader_t *reader) {
   size_t count = reader->read(reader->buf.ptr, reader->buf.cap, reader->handle);
 
   if (count == EOF)
-    return;
+    return EOF;
 
   reader->buf.pos = 0;
   reader->buf.lim = count;
+  return count;
 }
 
 char reader_current(reader_t *reader) {
@@ -59,15 +60,4 @@ void reader_next(reader_t *reader) {
     return;
 
   buffer_next(&reader->buf);
-}
-
-uint32_t reader_count_symbols(reader_t *reader, char symbol) {
-  uint32_t count = 0;
-
-  while (reader_current(reader) == symbol) {
-    count++;
-    reader_next(reader);
-  }
-
-  return count;
 }

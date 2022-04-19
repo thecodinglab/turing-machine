@@ -2,8 +2,8 @@
 
 tape_t tape_create() {
   return (tape_t){
-      .positive = list_create(1024, sizeof(symbol_t)),
-      .negative = list_create(1024, sizeof(symbol_t)),
+      .positive = list_create(0, sizeof(symbol_t)),
+      .negative = list_create(0, sizeof(symbol_t)),
       .head = 0,
   };
 }

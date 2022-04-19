@@ -7,9 +7,9 @@
 
 #define FMT_BUFFER_SIZE 2048
 
-turing_machine_t turing_machine_create(tape_t tape) {
+turing_machine_t turing_machine_create() {
   return (turing_machine_t){
-      .tape = tape,
+      .tape = tape_create(),
       .state = STARTING_STATE,
   };
 }
@@ -22,12 +22,15 @@ void turing_machine_process(turing_machine_t *turing_machine,
                             transition_t transition) {
   static char buffer[FMT_BUFFER_SIZE];
 
+  // place tape before transition into buffer.
   format_tape(buffer, FMT_BUFFER_SIZE, format_debug, &turing_machine->tape, 0);
 
+  // transition to the next state and update the tape.
   turing_machine->state = transition.next;
   tape_write(&turing_machine->tape, transition.out);
   tape_move(&turing_machine->tape, transition.dir);
 
+  // log transition debug messges.
   LOG("transitioning: %s", buffer);
 
   format_transition(buffer, FMT_BUFFER_SIZE, format_debug, transition);
