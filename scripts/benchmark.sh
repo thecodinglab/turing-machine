@@ -13,7 +13,7 @@ function run_benchmark() {
     --export-json "$DIR/hyperfine.json" \
     --export-markdown "$DIR/hyperfine.md" \
     -n "turing-machine-using-$STORAGE" \
-    "bin/turing-machine -s $STORAGE '$(cat machines/multiplication_large_values.txt)'"
+    "bin/turing-machine -v 3 -s $STORAGE '$(cat machines/multiplication_large_values.txt)'"
 }
 
 prepare_benchmarks

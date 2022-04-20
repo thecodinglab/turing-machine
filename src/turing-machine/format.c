@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 #define FMT_BUFFER_SIZE 100
 
@@ -199,14 +198,14 @@ int format_transition(char *buf, size_t size, format_options_t opts,
 }
 
 int format_head_start(char *buf, size_t size, format_options_t opts) {
-  if (opts.allow_ansi_colors && isatty(fileno(stdout)))
+  if (opts.allow_ansi_colors)
     return snprintf(buf, size, "%s", opts.ansi_tape_head);
   else
     return snprintf(buf, size, " h ");
 }
 
 int format_head_end(char *buf, size_t size, format_options_t opts) {
-  if (opts.allow_ansi_colors && isatty(fileno(stdout)))
+  if (opts.allow_ansi_colors)
     return snprintf(buf, size, "\033[49m");
   else
     return 0;

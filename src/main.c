@@ -56,14 +56,8 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
   } break;
 
   case 'v': {
-    int v = atoi(arg);
-
-    if (v != 0) {
-      arguments->verbosity = v;
-      return 0;
-    }
-
-    argp_error(state, "invalid verbosity '%s'", arg);
+    arguments->verbosity = atoi(arg);
+    return 0;
   } break;
 
   case ARGP_KEY_ARG: {
