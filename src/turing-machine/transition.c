@@ -157,3 +157,42 @@ void transition_storage_add(transition_storage_t *storage,
     return table_storage_add(&storage->table, transition);
   }
 }
+
+static inline void list_storage_to_list(list_t *list, list_t *dest) {
+  for (size_t i = 0; i < list->count; i++) {
+    list_add(dest, i, list_get(list, i));
+  }
+}
+
+static inline void map_storage_to_list(map_t *map, list_t *dest) {
+  for (size_t i = 0; i < map->items.count; i++) {
+    list_add(dest, i, list_get(&map->items, i) + map->key_size);
+  }
+}
+
+static inline void table_storage_to_list(hash_table_t *table, list_t *dest) {
+  hash_table_iter_t iter = hash_table_iter(table);
+  while (hash_table_iter_next(&iter)) {
+    list_add(dest, dest->count, iter.value);
+  }
+}
+
+list_t transition_storage_to_list(transition_storage_t *storage) {
+  list_t list = list_create(0, sizeof(transition_t));
+
+  switch (storage->kind) {
+  case STORAGE_LIST:
+    list_storage_to_list(&storage->list, &list);
+    break;
+
+  case STORAGE_MAP:
+    map_storage_to_list(&storage->map, &list);
+    break;
+
+  case STORAGE_HASH_TABLE:
+    table_storage_to_list(&storage->table, &list);
+    break;
+  }
+
+  return list;
+}

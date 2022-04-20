@@ -108,13 +108,12 @@ int main(int argc, char **argv) {
   if (log_is_enabled(LEVEL_INFO)) {
     log_info("interpreted transitions: \n");
 
-    // TODO
-    // hash_table_iter_t iter = hash_table_iter(&turing_machine.transitions);
-    // while (hash_table_iter_next(&iter)) {
-    //   transition_t *transition = iter.value;
-    //   format_transition(buffer, FMT_BUFFER_SIZE, format_default,
-    //   *transition); log_info("  %s\n", buffer);
-    // }
+    list_t transitions = transition_storage_to_list(turing_machine.storage);
+    for (size_t i = 0; i < transitions.count; i++) {
+      transition_t *transition = list_get(&transitions, i);
+      format_transition(buffer, FMT_BUFFER_SIZE, format_default, *transition);
+      log_info("  %s\n", buffer);
+    }
 
     log_info("\n");
   }

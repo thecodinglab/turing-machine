@@ -4,6 +4,7 @@
 #pragma once
 
 #include "tape.h"
+#include "util/list.h"
 
 #include <stdint.h>
 
@@ -73,3 +74,10 @@ transition_t *transition_storage_find(transition_storage_t *storage,
 /// @param transition the transition to attach.
 void transition_storage_add(transition_storage_t *storage,
                             transition_t transition);
+
+/// Copies contents of the given transition storage container into a new list.
+///
+/// @param storage the storage container to copy.
+///
+/// @return a list containing a copy of the contents from the storage container.
+list_t transition_storage_to_list(transition_storage_t *storage);
