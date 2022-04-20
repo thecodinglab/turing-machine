@@ -64,12 +64,12 @@ void list_set(list_t *list, size_t idx, const void *data) {
 /// @param list the list to ensure the capacity.
 /// @param req the required minimum capacity.
 void list_ensure(list_t *list, size_t req) {
-  if (req >= list->capacity) {
+  if (req > list->capacity) {
     // item is out of capacity: resize list.
     list_resize(list, req);
   }
 
-  if (req >= list->count) {
+  if (req > list->count) {
     // item is out of bounds: clear memory inbetween and increase bounds.
 
     // clear memory between bounds.
