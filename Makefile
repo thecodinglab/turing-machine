@@ -17,7 +17,7 @@ SOURCES := src/args.c \
 					 src/util/log.c \
 					 src/util/map.c
 CC := gcc
-CFLAGS := -std=c11 -Wall -Isrc -D_POSIX_C_SOURCE=1
+CFLAGS := -std=c11 -Wall -Isrc
 LDFLAGS := -ljson-c
 
 # config options
@@ -42,6 +42,14 @@ endif
 # enable overflow checks
 ifeq ($(DEBUG), 1)
 	CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+endif
+
+UNAME := $(shell uname -s)
+ifeq ($(UNAME), Darwin)
+	CFLAGS += -isystem /opt/local/include
+	LDFLAGS += -L /opt/local/lib -largp
+else
+	CFLAGS += -D_POSIX_C_SOURCE=1
 endif
 
 OBJECTS := $(SOURCES:%.c=$(CACHE_DIR)/%.o)
