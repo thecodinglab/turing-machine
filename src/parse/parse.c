@@ -80,17 +80,13 @@ tape_t parse_tape(reader_t *reader) {
   return tape;
 }
 
-turing_machine_t parse_turing_machine(reader_t *reader) {
-  turing_machine_t turing_machine = turing_machine_create();
-
-  turing_machine.tape = parse_tape(reader);
+void parse_turing_machine(reader_t *reader, turing_machine_t *dest) {
+  dest->tape = parse_tape(reader);
 
   while (has_transition(reader)) {
     reader_next(reader);
 
     transition_t transition = parse_transition(reader);
-    turing_machine_add_transition(&turing_machine, transition);
+    turing_machine_add_transition(dest, transition);
   }
-
-  return turing_machine;
 }

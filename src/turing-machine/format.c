@@ -16,7 +16,7 @@
 #define ALLOW_ANSI 1
 #else
 #define ALLOW_ANSI 0
-#endif // UNICODE
+#endif // ANSI
 
 const format_options_t format_default = {
     .allow_unicode_characters = ALLOW_UNICODE,

@@ -7,34 +7,17 @@
 
 #define FMT_BUFFER_SIZE 1024 * 1024
 
-typedef struct {
-  state_t state;
-  symbol_t symbol;
-} transition_key_t;
-
-static int transition_key_cmp(map_key_t a_ptr, map_key_t b_ptr) {
-  transition_key_t *a = (transition_key_t *)a_ptr;
-  transition_key_t *b = (transition_key_t *)b_ptr;
-
-  int cmp = b->state - a->state;
-  if (cmp == 0)
-    cmp = b->symbol - a->symbol;
-
-  return cmp;
-}
-
-turing_machine_t turing_machine_create() {
+turing_machine_t turing_machine_create(transition_storage_kind_t kind) {
   return (turing_machine_t){
       .tape = tape_create(),
       .state = STARTING_STATE,
-      .transitions = map_create(sizeof(transition_key_t), sizeof(transition_t),
-                                transition_key_cmp),
+      .storage = transition_storage_create(kind),
   };
 }
 
 void turing_machine_destroy(turing_machine_t *turing_machine) {
   tape_destroy(&turing_machine->tape);
-  map_destroy(&turing_machine->transitions);
+  transition_storage_destroy(turing_machine->storage);
 }
 
 void turing_machine_process(turing_machine_t *turing_machine,
@@ -65,12 +48,7 @@ void turing_machine_process(turing_machine_t *turing_machine,
 
 void turing_machine_add_transition(turing_machine_t *turing_machine,
                                    transition_t transition) {
-  transition_key_t key = {
-      .state = transition.state,
-      .symbol = transition.in,
-  };
-
-  map_insert(&turing_machine->transitions, &key, &transition);
+  transition_storage_add(turing_machine->storage, transition);
 }
 
 int turing_machine_is_accepting(turing_machine_t *turing_machine) {
@@ -80,12 +58,8 @@ int turing_machine_is_accepting(turing_machine_t *turing_machine) {
 int turing_machine_next(turing_machine_t *turing_machine) {
   symbol_t symbol = tape_read(&turing_machine->tape);
 
-  transition_key_t key = {
-      .state = turing_machine->state,
-      .symbol = symbol,
-  };
-
-  transition_t *transition = map_find(&turing_machine->transitions, &key);
+  transition_t *transition = transition_storage_find(
+      turing_machine->storage, turing_machine->state, symbol);
   if (transition == NULL)
     return 0;
 

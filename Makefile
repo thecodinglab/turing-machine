@@ -9,13 +9,15 @@ SOURCES := src/main.c \
 					 src/turing-machine/format.c \
 					 src/turing-machine/machine.c \
 					 src/turing-machine/tape.c \
+					 src/turing-machine/transition.c \
+					 src/util/hash_table.c \
 					 src/util/list.c \
 					 src/util/map.c
 OBJECTS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.o)
 DEPS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.d)
 
 CC := gcc
-CFLAGS := -std=c11 -Wall -Isrc
+CFLAGS := -std=c11 -Wall -Isrc -D_POSIX_C_SOURCE=1
 
 ifeq ($(UNICODE), 1)
 	CFLAGS += -DUNICODE
@@ -27,6 +29,10 @@ endif
 
 ifeq ($(DEBUG), 1)
 	CFLAGS += -DDEBUG -ggdb
+endif
+
+ifeq ($(PROFILE), 1)
+	CFLAGS += -pg
 endif
 
 # enable overflow checks

@@ -9,7 +9,7 @@ size_t file_read(void *dest, size_t size, void *handle) {
   return fread(dest, 1, size, (FILE *)handle);
 }
 
-reader_t reader_open_static(void *src, size_t size) {
+reader_t reader_open_static(const void *src, size_t size) {
   buffer_t buf = buffer_alloc(size);
   memcpy(buf.ptr, src, size);
   buf.lim = size;

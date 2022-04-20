@@ -31,7 +31,7 @@ typedef struct {
 /// @param size the number of bytes.
 ///
 /// @return a reader which reads from the given memory.
-reader_t reader_open_static(void *src, size_t size);
+reader_t reader_open_static(const void *src, size_t size);
 
 /// Creates a reader from the given file.
 ///

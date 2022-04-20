@@ -73,6 +73,5 @@ tape_t parse_tape(reader_t *reader);
 /// `;DADDRDAA;DADCDRDAA;DAADDCRDA;DAADCDCRDA`.
 ///
 /// @param reader the reader to read from.
-///
-/// @return the parsed turing machine.
-turing_machine_t parse_turing_machine(reader_t *reader);
+/// @param dest the destination where the turing machine will be stored.
+void parse_turing_machine(reader_t *reader, turing_machine_t *dest);
