@@ -29,7 +29,9 @@ ifeq ($(ANSI), 1)
 endif
 
 ifeq ($(DEBUG), 1)
-	CFLAGS += -DDEBUG -ggdb
+	CFLAGS += -ggdb
+else
+	CFLAGS += -O3
 endif
 
 ifeq ($(PROFILE), 1)
