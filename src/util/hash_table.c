@@ -1,5 +1,4 @@
 #include "hash_table.h"
-#include "debug.h"
 
 #include <assert.h>
 #include <memory.h>

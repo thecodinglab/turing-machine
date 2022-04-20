@@ -1,11 +1,9 @@
 #include "parse/parse.h"
 #include "turing-machine/format.h"
 #include "turing-machine/machine.h"
-
-#include "util/map.h"
+#include "util/log.h"
 
 #include <argp.h>
-#include <stdio.h>
 #include <string.h>
 
 #define FMT_BUFFER_SIZE 1024 * 1024
@@ -25,13 +23,13 @@ static struct argp_option options[] = {
      "The kind of storage to use for the transitions (default: hash_table)."},
     {"verbosity", 'v', "level", 0,
      "The verbosity level of the console output."},
+    {0},
 };
 
 typedef struct {
   const char *machine;
   transition_storage_kind_t storage_kind;
-
-  int verbosity; // TODO
+  level_t verbosity;
 } arguments_t;
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
@@ -92,13 +90,15 @@ int main(int argc, char **argv) {
   arguments_t args = {
       .machine = NULL,
       .storage_kind = STORAGE_HASH_TABLE,
-      .verbosity = 0,
+      .verbosity = LEVEL_INFO,
   };
 
   int ret;
   if ((ret = argp_parse(&argp, argc, argv, 0, NULL, &args)) != 0) {
     return ret;
   }
+
+  log_set_min_level(args.verbosity);
 
   turing_machine_t turing_machine = turing_machine_create(args.storage_kind);
 
@@ -111,18 +111,18 @@ int main(int argc, char **argv) {
   parse_turing_machine(&reader, &turing_machine);
   reader_destroy(&reader);
 
-  if (args.verbosity > 0) {
-    printf("interpreted transitions: \n");
+  if (log_is_enabled(LEVEL_INFO)) {
+    log_info("interpreted transitions: \n");
 
     // TODO
     // hash_table_iter_t iter = hash_table_iter(&turing_machine.transitions);
     // while (hash_table_iter_next(&iter)) {
     //   transition_t *transition = iter.value;
     //   format_transition(buffer, FMT_BUFFER_SIZE, format_default,
-    //   *transition); printf("  %s\n", buffer);
+    //   *transition); log_info("  %s\n", buffer);
     // }
 
-    printf("\n");
+    log_info("\n");
   }
 
   size_t steps = 0;
@@ -130,28 +130,28 @@ int main(int argc, char **argv) {
     steps++;
   }
 
-  if (args.verbosity > 0) {
-    printf("\n");
+  if (log_is_enabled(LEVEL_INFO)) {
+    log_info("\n");
 
-    printf("state: ");
+    log_info("state: ");
     if (turing_machine_is_accepting(&turing_machine)) {
-      printf(ANSI_FG_GREEN "ACCEPTING" ANSI_RESET "\n");
+      log_info(ANSI_FG_GREEN "ACCEPTING" ANSI_RESET "\n");
     } else {
-      printf(ANSI_FG_RED "REJECTING" ANSI_RESET "\n");
+      log_info(ANSI_FG_RED "REJECTING" ANSI_RESET "\n");
     }
 
     format_tape(buffer, FMT_BUFFER_SIZE, format_default, &turing_machine.tape,
                 0);
-    printf("content: %s\n", buffer);
+    log_info("content: %s\n", buffer);
 
     format_tape(buffer, FMT_BUFFER_SIZE, format_default, &turing_machine.tape,
                 5);
-    printf("\nturing_machine = {tape=%s, ", buffer);
+    log_info("\nturing_machine = {tape=%s, ", buffer);
     format_state(buffer, FMT_BUFFER_SIZE, format_default, turing_machine.state);
-    printf("state=%s, ", buffer);
+    log_info("state=%s, ", buffer);
 
-    printf("head=%d, ", turing_machine.tape.head);
-    printf("steps=%lu}\n", steps);
+    log_info("head=%ld, ", turing_machine.tape.head);
+    log_info("steps=%lu}\n", steps);
   }
 
   turing_machine_destroy(&turing_machine);

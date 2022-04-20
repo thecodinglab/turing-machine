@@ -12,6 +12,7 @@ SOURCES := src/main.c \
 					 src/turing-machine/transition.c \
 					 src/util/hash_table.c \
 					 src/util/list.c \
+					 src/util/log.c \
 					 src/util/map.c
 OBJECTS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.o)
 DEPS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.d)

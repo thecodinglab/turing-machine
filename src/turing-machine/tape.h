@@ -18,7 +18,7 @@ typedef uint32_t symbol_t;
 /// Theoretically, the tape head would be able to move indefinitely in any
 /// direction on the tape. However, this implementation currently only supports
 /// moving the tape \f$2^{31}-1\f$ positions into each direction.
-typedef int32_t tape_head_t;
+typedef int64_t tape_head_t;
 
 /// A direction describes the movement of the head of a tape.
 ///

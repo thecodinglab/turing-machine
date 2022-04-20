@@ -1,6 +1,6 @@
 #include "machine.h"
-#include "debug.h"
 #include "format.h"
+#include "util/log.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -22,28 +22,30 @@ void turing_machine_destroy(turing_machine_t *turing_machine) {
 
 void turing_machine_process(turing_machine_t *turing_machine,
                             transition_t transition) {
-#ifdef DEBUG
   static char buffer[FMT_BUFFER_SIZE];
 
-  // place tape before transition into buffer.
-  format_tape(buffer, FMT_BUFFER_SIZE, format_debug, &turing_machine->tape, 0);
-#endif // DEBUG
+  if (log_is_enabled(LEVEL_DEBUG)) {
+    // place tape before transition into buffer.
+    format_tape(buffer, FMT_BUFFER_SIZE, format_debug, &turing_machine->tape,
+                0);
+  }
 
   // transition to the next state and update the tape.
   turing_machine->state = transition.next;
   tape_write(&turing_machine->tape, transition.out);
   tape_move(&turing_machine->tape, transition.dir);
 
-#ifdef DEBUG
-  // log transition debug messges.
-  LOG("transitioning: %s", buffer);
+  if (log_is_enabled(LEVEL_DEBUG)) {
+    // log transition debug messges.
+    log_debug("transitioning: %s", buffer);
 
-  format_transition(buffer, FMT_BUFFER_SIZE, format_debug, transition);
-  LOG(" -> %s -> ", buffer);
+    format_transition(buffer, FMT_BUFFER_SIZE, format_debug, transition);
+    log_debug(" -> %s -> ", buffer);
 
-  format_tape(buffer, FMT_BUFFER_SIZE, format_debug, &turing_machine->tape, 0);
-  LOG("%s\n", buffer);
-#endif // DEBUG
+    format_tape(buffer, FMT_BUFFER_SIZE, format_debug, &turing_machine->tape,
+                0);
+    log_debug("%s\n", buffer);
+  }
 }
 
 void turing_machine_add_transition(turing_machine_t *turing_machine,

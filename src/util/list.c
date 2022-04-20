@@ -1,5 +1,4 @@
 #include "list.h"
-#include "debug.h"
 
 #include <assert.h>
 #include <memory.h>
@@ -29,8 +28,6 @@ void list_resize(list_t *list, size_t capacity) {
   int remainder = capacity % 1024;
   if (remainder != 0)
     capacity = capacity - remainder + 1024;
-
-  LOG("list_resize(%p, %lu);\n", list, capacity);
 
   void *ptr = realloc(list->ptr, capacity * list->size);
   assert(ptr != NULL);
