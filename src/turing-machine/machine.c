@@ -60,10 +60,11 @@ void turing_machine_add_accepting_state(turing_machine_t *turing_machine,
               turing_machine->accepting_states.count, &state);
 }
 
-int turing_machine_is_accepting(turing_machine_t *turing_machine) {
+int turing_machine_is_accepting(turing_machine_t *turing_machine,
+                                state_t state) {
   for (size_t i = 0; i < turing_machine->accepting_states.count; i++) {
-    state_t *state = list_get(&turing_machine->accepting_states, i);
-    if ((*state) == turing_machine->state) {
+    state_t *s = list_get(&turing_machine->accepting_states, i);
+    if ((*s) == state) {
       return 1;
     }
   }

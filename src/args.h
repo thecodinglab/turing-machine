@@ -10,7 +10,7 @@ typedef struct {
   const char *machine;
   transition_storage_kind_t storage_kind;
 
-  const char *json;
+  int json;
 
   level_t verbosity;
 } arguments_t;

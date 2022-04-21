@@ -50,6 +50,11 @@ reader_t reader_open_file(FILE *file);
 /// @param reader the reader to destroy.
 void reader_destroy(reader_t *reader);
 
+/// Reads the entire underlying data object into the buffer of the reader.
+///
+/// @param reader the reader to read.
+void reader_read_all(reader_t *reader);
+
 /// Gets the current byte of the reader.
 ///
 /// @param reader the reader from which to read the byte.

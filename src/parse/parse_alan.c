@@ -9,7 +9,7 @@
 #define TOKEN_RIGHT 'R'
 #define TOKEN_LEFT 'L'
 
-uint32_t parse_symbol_count(reader_t *reader, char symbol) {
+static uint32_t parse_symbol_count(reader_t *reader, char symbol) {
   uint32_t count = 0;
 
   while (reader_current(reader) == symbol) {
@@ -20,21 +20,21 @@ uint32_t parse_symbol_count(reader_t *reader, char symbol) {
   return count;
 }
 
-state_t parse_state(reader_t *reader) {
+static state_t parse_state(reader_t *reader) {
   assert(reader_current(reader) == TOKEN_PREFIX);
   reader_next(reader);
 
   return (state_t)parse_symbol_count(reader, TOKEN_STATE);
 }
 
-symbol_t parse_symbol(reader_t *reader) {
+static symbol_t parse_symbol(reader_t *reader) {
   assert(reader_current(reader) == TOKEN_PREFIX);
   reader_next(reader);
 
   return (symbol_t)parse_symbol_count(reader, TOKEN_SYMBOL);
 }
 
-direction_t parse_direction(reader_t *reader) {
+static direction_t parse_direction(reader_t *reader) {
   switch (reader_current(reader)) {
   case TOKEN_RIGHT:
     reader_next(reader);
@@ -48,11 +48,11 @@ direction_t parse_direction(reader_t *reader) {
   }
 }
 
-int has_transition(reader_t *reader) {
+static int has_transition(reader_t *reader) {
   return reader_current(reader) == TOKEN_SEPARATOR;
 }
 
-transition_t parse_transition(reader_t *reader) {
+static transition_t parse_transition(reader_t *reader) {
   state_t state = parse_state(reader);
   symbol_t in = parse_symbol(reader);
   symbol_t out = parse_symbol(reader);
@@ -68,7 +68,7 @@ transition_t parse_transition(reader_t *reader) {
   };
 }
 
-tape_t parse_tape(reader_t *reader) {
+static tape_t parse_tape(reader_t *reader) {
   tape_t tape = tape_create();
 
   size_t pos = 0;
@@ -85,7 +85,7 @@ tape_t parse_tape(reader_t *reader) {
 /// The starting state of every turing machine.
 #define STARTING_STATE 1
 
-void parse_turing_machine(reader_t *reader, turing_machine_t *dest) {
+void parse_turing_machine_from_alan(reader_t *reader, turing_machine_t *dest) {
   dest->state = STARTING_STATE;
   turing_machine_add_accepting_state(dest, ACCEPTING_STATE);
 

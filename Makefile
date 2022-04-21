@@ -5,7 +5,8 @@ TARGET := $(OUT_DIR)/turing-machine
 SOURCES := src/args.c \
 					 src/main.c \
 					 src/parse/buffer.c \
-					 src/parse/parse.c \
+					 src/parse/parse_alan.c \
+					 src/parse/parse_json.c \
 					 src/parse/reader.c \
 					 src/turing-machine/format.c \
 					 src/turing-machine/machine.c \
@@ -15,12 +16,11 @@ SOURCES := src/args.c \
 					 src/util/list.c \
 					 src/util/log.c \
 					 src/util/map.c
-OBJECTS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.o)
-DEPS := $(SOURCES:src/%.c=$(CACHE_DIR)/%.d)
-
 CC := gcc
 CFLAGS := -std=c11 -Wall -Isrc -D_POSIX_C_SOURCE=1
+LDFLAGS := -ljson-c
 
+# config options
 ifeq ($(UNICODE), 1)
 	CFLAGS += -DUNICODE
 endif
@@ -44,6 +44,9 @@ ifeq ($(DEBUG), 1)
 	CFLAGS += -fsanitize=address -fno-omit-frame-pointer
 endif
 
+OBJECTS := $(SOURCES:%.c=$(CACHE_DIR)/%.o)
+DEPS := $(SOURCES:%.c=$(CACHE_DIR)/%.d)
+
 all: $(TARGET)
 
 .PHONY: clean
@@ -53,11 +56,11 @@ clean:
 $(TARGET): $(DEPS) $(OBJECTS) $(OUT_DIR)
 	$(LINK.c) -o $@ $(OBJECTS)
 
-$(CACHE_DIR)/%.d: src/%.c
+$(CACHE_DIR)/%.d: %.c
 	@mkdir -p $(shell dirname $@)
 	$(COMPILE.c) -M -o $@ $<
 
-$(CACHE_DIR)/%.o: src/%.c
+$(CACHE_DIR)/%.o: %.c
 	@mkdir -p $(shell dirname $@)
 	$(COMPILE.c) -o $@ $<
 

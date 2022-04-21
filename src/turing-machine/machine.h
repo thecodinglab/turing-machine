@@ -54,10 +54,15 @@ void turing_machine_add_transition(turing_machine_t *turing_machine,
 void turing_machine_add_accepting_state(turing_machine_t *turing_machine,
                                         state_t state);
 
-/// Checks wheather the turing machine is in an accepting state.
+/// Checks wheather the given state is in an accepting state of the turing
+/// machine.
 ///
-/// @return `0` if the turing machine is not accepting.
-int turing_machine_is_accepting(turing_machine_t *turing_machine);
+/// @param turing_machine the turing machine to check.
+/// @param state the state to check.
+///
+/// @return `0` if the state is not accepting.
+int turing_machine_is_accepting(turing_machine_t *turing_machine,
+                                state_t state);
 
 /// Processes the next transition of the turing machine.
 ///

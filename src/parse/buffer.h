@@ -18,24 +18,32 @@ typedef struct {
   size_t cap;
 } buffer_t;
 
-/// Allocates a byte buffer with the given size.
+/// Creates an empty byte buffer.
 ///
-/// @param size the amount of bytes to allocate.
-///
-/// @return a byte buffer with the given capacity.
-buffer_t buffer_alloc(size_t size);
+/// @return an empty byte buffer.
+buffer_t buffer_create();
 
 /// Destroys the given byte buffer by releasing any allocaed memory.
 ///
 /// @param buffer the buffer to destroy.
-void buffer_free(buffer_t *buffer);
+void buffer_destroy(buffer_t *buffer);
 
-/// Checks whether the given byte buffer is empty.
+/// Ensures that the buffer has at least the given capacity. If the minimum
+/// requirement is not set, the buffer will be expanded.
 ///
-/// @param buffer the buffer to check.
+/// @param buffer the buffer to ensure the capacity for.
+/// @param size the minimum number of bytes.
+void buffer_extend(buffer_t *buffer, size_t size);
+
+/// Writes the given block of data to the buffer. If the size exceeds the
+/// current buffer, the buffer will be expanded.
 ///
-/// @return `0` if the buffer is not empty.
-int buffer_is_empty(buffer_t *buffer);
+/// @param buffer the buffer to write to.
+/// @param data the data to be written.
+/// @param size the total bytes of data to be written.
+///
+/// @return the total number of written bytes.
+int buffer_append(buffer_t *buffer, const void *data, size_t size);
 
 /// Gets the current byte at the position of the buffer.
 ///

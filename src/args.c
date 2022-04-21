@@ -5,6 +5,7 @@
 #include <string.h>
 
 static struct argp_option options[] = {
+    {"json", 'j', NULL, 0, "When set will parse the input from json"},
     {"storage", 's', "kind", 0,
      "The kind of storage to use for the transitions (default: hash_table)."},
     {"verbosity", 'v', "level", 0,
@@ -16,6 +17,10 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state) {
   arguments_t *arguments = state->input;
 
   switch (key) {
+  case 'j': {
+    arguments->json = 1;
+  } break;
+
   case 's': {
     if (strcmp(arg, "list") == 0) {
       arguments->storage_kind = STORAGE_LIST;

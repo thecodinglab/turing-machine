@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
   arguments_t args = {
       .machine = NULL,
       .storage_kind = STORAGE_HASH_TABLE,
+      .json = 0,
       .verbosity = LEVEL_INFO,
   };
 
@@ -40,7 +41,11 @@ int main(int argc, char **argv) {
   else
     reader = reader_open_file(stdin);
 
-  parse_turing_machine(&reader, &turing_machine);
+  if (args.json)
+    parse_turing_machine_from_json(&reader, &turing_machine);
+  else
+    parse_turing_machine_from_alan(&reader, &turing_machine);
+
   reader_destroy(&reader);
 
   if (log_is_enabled(LEVEL_INFO)) {
@@ -65,7 +70,7 @@ int main(int argc, char **argv) {
     log_info("\n");
 
     log_info("state: ");
-    if (turing_machine_is_accepting(&turing_machine)) {
+    if (turing_machine_is_accepting(&turing_machine, turing_machine.state)) {
       log_info(ANSI_FG_GREEN "ACCEPTING" ANSI_RESET "\n");
     } else {
       log_info(ANSI_FG_RED "REJECTING" ANSI_RESET "\n");
