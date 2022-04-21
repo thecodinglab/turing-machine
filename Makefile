@@ -2,7 +2,8 @@ CACHE_DIR := .cache
 OUT_DIR := bin
 
 TARGET := $(OUT_DIR)/turing-machine
-SOURCES := src/main.c \
+SOURCES := src/args.c \
+					 src/main.c \
 					 src/parse/buffer.c \
 					 src/parse/parse.c \
 					 src/parse/reader.c \

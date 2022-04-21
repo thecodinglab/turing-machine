@@ -80,7 +80,15 @@ tape_t parse_tape(reader_t *reader) {
   return tape;
 }
 
+/// The accepting state of every turing machine.
+#define ACCEPTING_STATE 0
+/// The starting state of every turing machine.
+#define STARTING_STATE 1
+
 void parse_turing_machine(reader_t *reader, turing_machine_t *dest) {
+  dest->state = STARTING_STATE;
+  turing_machine_add_accepting_state(dest, ACCEPTING_STATE);
+
   dest->tape = parse_tape(reader);
 
   while (has_transition(reader)) {

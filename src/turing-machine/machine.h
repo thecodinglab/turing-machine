@@ -15,11 +15,6 @@
 
 #include <stdint.h>
 
-/// The accepting state of every turing machine.
-#define ACCEPTING_STATE 0
-/// The starting state of every turing machine.
-#define STARTING_STATE 1
-
 /// A turing machine is a machine that manipulates symbols on a tape according
 /// to a table of rules (transitions).
 typedef struct {
@@ -27,6 +22,8 @@ typedef struct {
   tape_t tape;
   /// The current state.
   state_t state;
+  /// The storage container for the accepting states.
+  list_t accepting_states;
   /// The storage container for the transitions.
   transition_storage_t *storage;
 } turing_machine_t;
@@ -49,6 +46,13 @@ void turing_machine_destroy(turing_machine_t *turing_machine);
 /// @param transition the transition to attach.
 void turing_machine_add_transition(turing_machine_t *turing_machine,
                                    transition_t transition);
+
+/// Marks the given state as accepting.
+///
+/// @param turing_machine the turing machine on which to accept the state.
+/// @param state the state which should get accepted.
+void turing_machine_add_accepting_state(turing_machine_t *turing_machine,
+                                        state_t state);
 
 /// Checks wheather the turing machine is in an accepting state.
 ///

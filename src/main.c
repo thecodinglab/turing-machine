@@ -1,12 +1,10 @@
+#include "args.h"
 #include "parse/parse.h"
 #include "turing-machine/format.h"
 #include "turing-machine/machine.h"
 #include "util/log.h"
 
-#include <argp.h>
 #include <string.h>
-
-#define FMT_BUFFER_SIZE 1024 * 1024
 
 #ifdef ANSI
 #define ANSI_FG_RED "\033[31m"
@@ -18,66 +16,7 @@
 #define ANSI_RESET ""
 #endif // ANSI
 
-static struct argp_option options[] = {
-    {"storage", 's', "kind", 0,
-     "The kind of storage to use for the transitions (default: hash_table)."},
-    {"verbosity", 'v', "level", 0,
-     "The verbosity level of the console output."},
-    {0},
-};
-
-typedef struct {
-  const char *machine;
-  transition_storage_kind_t storage_kind;
-  level_t verbosity;
-} arguments_t;
-
-static error_t parse_opt(int key, char *arg, struct argp_state *state) {
-  arguments_t *arguments = state->input;
-
-  switch (key) {
-  case 's': {
-    if (strcmp(arg, "list") == 0) {
-      arguments->storage_kind = STORAGE_LIST;
-      return 0;
-    }
-
-    if (strcmp(arg, "map") == 0) {
-      arguments->storage_kind = STORAGE_MAP;
-      return 0;
-    }
-
-    if (strcmp(arg, "hash_table") == 0) {
-      arguments->storage_kind = STORAGE_HASH_TABLE;
-      return 0;
-    }
-
-    argp_error(state, "unknown storage option '%s'", arg);
-  } break;
-
-  case 'v': {
-    arguments->verbosity = atoi(arg);
-    return 0;
-  } break;
-
-  case ARGP_KEY_ARG: {
-    if (state->arg_num >= 1)
-      argp_usage(state);
-
-    arguments->machine = arg;
-  } break;
-
-  case ARGP_KEY_END: {
-  } break;
-
-  default:
-    return ARGP_ERR_UNKNOWN;
-  }
-
-  return 0;
-}
-
-static struct argp argp = {options, parse_opt, "[TURING MACHINE]", NULL};
+#define FMT_BUFFER_SIZE 1024 * 1024
 static char buffer[FMT_BUFFER_SIZE];
 
 int main(int argc, char **argv) {
@@ -88,9 +27,8 @@ int main(int argc, char **argv) {
   };
 
   int ret;
-  if ((ret = argp_parse(&argp, argc, argv, 0, NULL, &args)) != 0) {
+  if ((ret = args_parse(&args, argc, argv)) != 0)
     return ret;
-  }
 
   log_set_min_level(args.verbosity);
 

@@ -10,7 +10,8 @@
 turing_machine_t turing_machine_create(transition_storage_kind_t kind) {
   return (turing_machine_t){
       .tape = tape_create(),
-      .state = STARTING_STATE,
+      .state = 0,
+      .accepting_states = list_create(0, sizeof(state_t)),
       .storage = transition_storage_create(kind),
   };
 }
@@ -53,8 +54,21 @@ void turing_machine_add_transition(turing_machine_t *turing_machine,
   transition_storage_add(turing_machine->storage, transition);
 }
 
+void turing_machine_add_accepting_state(turing_machine_t *turing_machine,
+                                        state_t state) {
+  list_append(&turing_machine->accepting_states,
+              turing_machine->accepting_states.count, &state);
+}
+
 int turing_machine_is_accepting(turing_machine_t *turing_machine) {
-  return turing_machine->state == ACCEPTING_STATE;
+  for (size_t i = 0; i < turing_machine->accepting_states.count; i++) {
+    state_t *state = list_get(&turing_machine->accepting_states, i);
+    if ((*state) == turing_machine->state) {
+      return 1;
+    }
+  }
+
+  return 0;
 }
 
 int turing_machine_next(turing_machine_t *turing_machine) {
