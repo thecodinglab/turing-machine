@@ -83,10 +83,14 @@ $(OUT_DIR):
 docs:
 	doxygen
 
-# Test
+# Benchmark
 
-test: tests/tests.sh
-	tests/tests.sh
+.PHONY: benchmark
+benchmark: scripts/benchmark.sh
+	scripts/benchmark.sh
 
-$(CACHE_DIR)/test.out: tests/tests.sh
-	tests/tests.sh > $@
+# Profile
+
+.PHONY: profile
+profile: scripts/profile.sh
+	scripts/profile.sh

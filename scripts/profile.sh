@@ -12,8 +12,7 @@ function run_profile() {
     rm -f gmon.out
   fi
 
-  bin/turing-machine -v 3 -s $STORAGE "$(cat machines/multiplication_large_values.txt)"
-
+  bin/turing-machine -v 3 -s $STORAGE "$(cat machines/unary_multiplication_39_19.txt)"
   gprof bin/turing-machine gmon.out > "$DIR/profile.txt"
 }
 

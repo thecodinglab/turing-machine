@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
     format_state(buffer, FMT_BUFFER_SIZE, format_default, turing_machine.state);
     log_info("state=%s, ", buffer);
 
-    log_info("head=%ld, ", turing_machine.tape.head);
+    log_info("head=%lld, ", turing_machine.tape.head);
     log_info("steps=%lu}\n", steps);
   }
 
